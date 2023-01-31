@@ -1,0 +1,84 @@
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: false
+  skip-dirs:
+    - features
+    - migrations
+    - cmd
+  skip-dirs-use-default: true
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  uniq-by-line: true
+
+linters-settings:
+  gocyclo:
+    min-complexity: 10
+  gofmt:
+    simplify: false
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    #    - dupl
+    - errcheck
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - nolintlint
+    - rowserrcheck
+    - exportloopref
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+    - bodyclose
+    - gocognit
+    - asciicheck
+    - prealloc
+    - godox
+    - nestif
+    - govet
+    - godot
+    - gofumpt
+
+  fast: false
+
+issues:
+  # Automatically fix found issues
+  fix: true
+  exclude-use-default: false
+  exclude-rules:
+    - path: main.go
+      linters:
+        - gocyclo
+    - path: internal/url/mock.go
+      linters:
+        - unused
+    # This rule ignores missing error handling when closing http.Response.Body.
+    - linters:
+        - errcheck
+      text: ".Body.Close` is not checked"

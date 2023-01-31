@@ -1,0 +1,36 @@
+version: '3'
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GO111MODULE: "on"
+    container_name: dev
+    command: "CompileDaemon -build='make install-all' -command='tail -f /dev/null'"
+    volumes:
+      - .:/shortener
+    ports:
+      - "8080:80"
+    environment:
+      LOG_LEVEL: "debug"
+      SERVER_ADDRESS: "0.0.0.0:80"
+      DATABASE_DSN: "postgres://dev:dev@db:5432/shortener?sslmode=disable"
+    depends_on:
+      - db
+  db:
+    image: "postgres:12.2"
+    restart: always
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: dev
+      POSTGRES_USER: dev
+      POSTGRES_DB: shortener
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U iss" ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    ports:
+      - "5432:5432"
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
